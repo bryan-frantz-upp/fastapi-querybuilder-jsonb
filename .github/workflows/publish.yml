@@ -1,28 +1,65 @@
-name: Publish to PyPI
+name: Release Pipeline
+
 on:
   push:
     tags:
-      - "v*"  # Trigger on tags like v1.0.0
+      - 'v*'  # Trigger on semantic version tags (e.g., v1.0.0)
 
 jobs:
-  publish:
+  release:
     runs-on: ubuntu-latest
     steps:
+      # 1. Checkout code and verify tag
       - uses: actions/checkout@v4
-      
+        with:
+          fetch-depth: 0  # Get full history for tag verification
+
+      # 2. Set up Python and tools
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"  # Match your project's Python version
+          python-version: '3.10'
 
-      - name: Install Poetry
+      - name: Install dependencies
         run: |
           pip install poetry
-          poetry --version  # Verify installation
+          sudo apt-get install -y gpg  # For commit/tag verification
 
-      - name: Build and publish
+      # 3. Verify GPG-signed tag (if applicable)
+      - name: Verify signed tag
+        run: |
+          git verify-tag ${{ github.ref_name }} || exit 1
+          echo "Tag verified successfully"
+
+      # 4. Build package and generate hashes
+      - name: Build package
+        run: |
+          poetry build
+          sha256sum dist/* > dist/checksums.txt
+          cat dist/checksums.txt
+
+      # 5. Publish to PyPI
+      - name: Publish to PyPI
         env:
           PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          poetry build
           poetry publish --username __token__ --password $PYPI_TOKEN
+
+      # 6. Create GitHub Release with assets
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ github.ref_name }}
+          body_path: CHANGELOG.md
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+            dist/checksums.txt
+          draft: false
+          prerelease: false
+
+      # 7. Verify release assets (post-upload)
+      - name: Verify published assets
+        run: |
+          gh release view ${{ github.ref_name }} --json assets -q '.assets[].name' | grep -q '.whl$'
+          gh release view ${{ github.ref_name }} --json assets -q '.assets[].name' | grep -q 'checksums.txt'
