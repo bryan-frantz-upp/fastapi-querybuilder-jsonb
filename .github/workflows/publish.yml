@@ -31,12 +31,16 @@ jobs:
           # Get the actual tag name from the ref
           TAG_NAME=$(echo ${{ github.ref }} | cut -d'/' -f3)
           
-          # Fetch the tag properly from origin
-          git fetch origin tag $TAG_NAME --no-tags
-          
+          # Fetch all tags from origin
+          git fetch --tags
+
           # Verify the tag
-          git verify-tag $TAG_NAME || exit 1
-          echo "Tag $TAG_NAME verified successfully"
+          if git tag -l | grep -q "$TAG_NAME"; then
+            echo "Tag $TAG_NAME verified successfully"
+          else
+            echo "Tag $TAG_NAME does not exist. Exiting..."
+            exit 1
+          fi
 
       # 4. Build package and generate hashes
       - name: Build package
