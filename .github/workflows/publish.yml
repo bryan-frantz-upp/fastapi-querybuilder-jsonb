@@ -24,12 +24,19 @@ jobs:
         run: |
           pip install poetry
           sudo apt-get install -y gpg  # For commit/tag verification
-
+      
       # 3. Verify GPG-signed tag (if applicable)
-      - name: Verify signed tag
+      - name: Fetch and verify tag
         run: |
-          git verify-tag ${{ github.ref_name }} || exit 1
-          echo "Tag verified successfully"
+          # Get the actual tag name from the ref
+          TAG_NAME=$(echo ${{ github.ref }} | cut -d'/' -f3)
+          
+          # Fetch the tag properly from origin
+          git fetch origin tag $TAG_NAME --no-tags
+          
+          # Verify the tag
+          git verify-tag $TAG_NAME || exit 1
+          echo "Tag $TAG_NAME verified successfully"
 
       # 4. Build package and generate hashes
       - name: Build package
