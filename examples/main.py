@@ -45,7 +45,7 @@ class User(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     # deleted_at = Column(DateTime, nullable=True)
 
-    role = relationship("Role", back_populates="users")
+    role = relationship("Role", back_populates="users", lazy="selectin")
 
 
 # ───── Lifespan / Seed Data ─────────────────────
