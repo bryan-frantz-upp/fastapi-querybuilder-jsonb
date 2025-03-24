@@ -10,8 +10,9 @@ This project is a FastAPI application that demonstrates filtering and sorting fu
 
 ## Requirements
 
-- Python 3.7+
+- Python 3.10+
 - FastAPI
+- SQLAlchemy
 - Uvicorn
 - Poetry
 

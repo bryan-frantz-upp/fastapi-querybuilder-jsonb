@@ -26,3 +26,12 @@ jobs:
         run: |
           poetry build
           poetry publish --username __token__ --password $PYPI_TOKEN
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "v${{ github.ref_name }}"
+          body_path: CHANGELOG.md
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
