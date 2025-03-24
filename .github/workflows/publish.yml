@@ -8,6 +8,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Required to create releases
+      packages: write  # Required if publishing packages
     steps:
       # 1. Checkout code and verify tag
       - uses: actions/checkout@v4
@@ -66,8 +69,6 @@ jobs:
             dist/*.whl
             dist/*.tar.gz
             dist/checksums.txt
-          draft: false
-          prerelease: false
 
       # 7. Verify release assets (post-upload)
       - name: Verify published assets
