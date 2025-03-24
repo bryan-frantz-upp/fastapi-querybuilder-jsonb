@@ -1,11 +1,12 @@
 from fastapi import FastAPI, Depends
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, create_engine
+from sqlalchemy import String, ForeignKey, create_engine
 from sqlalchemy.orm import relationship, sessionmaker, Session, declarative_base
 from datetime import datetime
 from contextlib import asynccontextmanager
 from fastapi_filter_sort.dependencies import QueryBuilder
 import uvicorn
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import Mapped, mapped_column
 
 # ───── App & DB Setup ───────────────────────────
 
@@ -29,21 +30,23 @@ def get_db():
 class Role(Base):
     __tablename__ = "roles"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, unique=True, nullable=False)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String, unique=True, nullable=False)
 
-    users = relationship("User", back_populates="role")
+    users: Mapped[list["User"]] = relationship("User", back_populates="role")
 
 
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, index=True)
-    email = Column(String, unique=True, index=True)
-    role_id = Column(Integer, ForeignKey("roles.id"))
-    created_at = Column(DateTime, default=datetime.utcnow)
-    # deleted_at = Column(DateTime, nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    name: Mapped[str] = mapped_column(String, index=True)
+    email: Mapped[str] = mapped_column(String, unique=True, index=True)
+    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"))
+    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
+    # deleted_at: Mapped[datetime | None] = mapped_column(nullable=True)
+
+    role: Mapped["Role"] = relationship("Role", back_populates="users")
 
     role = relationship("Role", back_populates="users", lazy="selectin")
 

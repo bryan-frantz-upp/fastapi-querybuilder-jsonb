@@ -19,7 +19,7 @@ classifiers = [
 ]
 
 [tool.poetry.dependencies]
-python = ">=3.12"
+python = ">=3.10"
 fastapi = ">=0.115.*"
 sqlalchemy = ">=2.*"
 uvicorn = ">=0.30.1"
