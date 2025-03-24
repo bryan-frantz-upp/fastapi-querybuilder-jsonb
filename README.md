@@ -41,9 +41,9 @@ This project is a FastAPI application that demonstrates filtering and sorting fu
 ## Contributing
 
 1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
+2. Create a new branch (`git checkout -b feature/branch-name`).
 3. Commit your changes (`git commit -am 'Add new feature'`).
-4. Push to the branch (`git push origin feature-branch`).
+4. Push to the branch (`git push origin feature/branch-name`).
 5. Create a new Pull Request.
 
 ## License
