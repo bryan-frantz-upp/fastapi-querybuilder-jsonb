@@ -35,7 +35,7 @@ This project is a FastAPI application that demonstrates filtering and sorting fu
 
 4. Run the application:
     ```sh
-    python examples/main.py
+    poetry run python example/main.py
     ```
 
 ## Contributing
