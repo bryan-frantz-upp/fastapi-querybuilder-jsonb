@@ -1,0 +1,19 @@
+name: Publish to PyPI
+on:
+  push:
+    tags:
+      - "v*"  # Trigger on tags like v1.0.1
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+      - name: Build and publish
+        env:
+          PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          poetry build
+          poetry publish --username __token__ --password $PYPI_TOKEN
