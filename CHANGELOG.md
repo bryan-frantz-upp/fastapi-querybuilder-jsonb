@@ -2,12 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
-## [unreleased]
+## [0.1.4] - 2025-03-24
 
 ### ⚙️ Miscellaneous Tasks
 
 - Enhance release pipeline with GPG verification and asset management
 - Improve GPG tag verification process in publish workflow
+- Update CHANGELOG.md for version 0.1.4 and increment version in pyproject.toml
+- Improve tag verification process in publish workflow
+- Update publish workflow to include permissions for creating releases and publishing packages
+- Add GH_TOKEN environment variable for GitHub release asset verification
 
 ## [0.1.3] - 2025-03-24
 
