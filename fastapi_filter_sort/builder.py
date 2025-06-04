@@ -1,6 +1,6 @@
 # fastapi_querybuilder/builder.py
 
-from sqlalchemy import select, or_, asc, desc, String
+from sqlalchemy import select, or_, asc, desc, String, Enum
 from fastapi import HTTPException
 from .core import parse_filter_query, parse_filters, resolve_and_join_column
 
@@ -20,11 +20,21 @@ def build_query(cls, params):
 
     # Search
     if params.search:
-        search_expr = [
-            column.ilike(f"%{params.search}%")
-            for column in cls.__table__.columns
-            if isinstance(column.type, String)
-        ]
+        search_expr = []
+        for column in cls.__table__.columns:
+            if isinstance(column.type, String):
+                # Search in string columns using ilike
+                search_expr.append(column.ilike(f"%{params.search}%"))
+            elif isinstance(column.type, Enum):
+                # Search in enum columns by checking if search term matches any enum value
+                enum_matches = []
+                if hasattr(column.type, 'enums'):
+                    for enum_value in column.type.enums:
+                        if params.search.lower() in enum_value.lower():
+                            enum_matches.append(column == enum_value)
+                if enum_matches:
+                    search_expr.extend(enum_matches)
+
         if search_expr:
             query = query.where(or_(*search_expr))
 
