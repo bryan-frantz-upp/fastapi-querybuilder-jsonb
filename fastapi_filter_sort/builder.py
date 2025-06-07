@@ -34,6 +34,14 @@ def build_query(cls, params):
                             enum_matches.append(column == enum_value)
                 if enum_matches:
                     search_expr.extend(enum_matches)
+            # Optionally, search in integer columns if the search is a digit
+            elif hasattr(column.type, "python_type") and column.type.python_type is int:
+                if params.search.isdigit():
+                    search_expr.append(column == int(params.search))
+            # Optionally, search in boolean columns
+            elif hasattr(column.type, "python_type") and column.type.python_type is bool:
+                if params.search.lower() in ("true", "false"):
+                    search_expr.append(column == (params.search.lower() == "true"))
 
         if search_expr:
             query = query.where(or_(*search_expr))

@@ -49,7 +49,8 @@ class User(Base):
     name: Mapped[str] = mapped_column(String, index=True)
     email: Mapped[str] = mapped_column(String, unique=True, index=True)
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"))
-
+    age: Mapped[int] = mapped_column(nullable=True)
+    is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     status: Mapped[StatusEnum] = mapped_column(String, default=StatusEnum.ACTIVE, nullable=False)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
     # deleted_at: Mapped[datetime | None] = mapped_column(nullable=True)
@@ -78,9 +79,11 @@ async def lifespan(app: FastAPI):
 
         # Seed users with mapped roles
         db.add_all([
-            User(name="Alice", email="alice@example.com", role=admin, status=StatusEnum.ACTIVE),
-            User(name="Bob", email="bob@example.com", role=user, status=StatusEnum.INACTIVE),
-            User(name="Carol", email="carol@example.com", role=manager, status=StatusEnum.SUSPENDED),
+            User(name="Alice", email="alice@example.com", role=admin, status=StatusEnum.ACTIVE, age=30, is_active=True),
+            User(name="Bob", email="bob@example.com", role=user, status=StatusEnum.INACTIVE, age=25, is_active=False),
+            User(name="Carol", email="carol@example.com", role=manager, status=StatusEnum.SUSPENDED, age=40, is_active=False),
+            User(name="Dave", email="dave@example.com", role=admin, status=StatusEnum.ACTIVE, age=35, is_active=True),
+            User(name="Eve", email="eve@example.com", role=user, status=StatusEnum.ACTIVE, age=28, is_active=True),
         ])
         db.commit()
 
