@@ -7,6 +7,7 @@ from fastapi_filter_sort.dependencies import QueryBuilder
 import uvicorn
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Mapped, mapped_column
+from enum import Enum
 
 # ───── App & DB Setup ───────────────────────────
 
@@ -27,6 +28,11 @@ def get_db():
 
 # ───── Models ────────────────────────────────────
 
+class StatusEnum(str, Enum):
+    ACTIVE = "active"
+    INACTIVE = "inactive"
+    SUSPENDED = "suspended"
+
 class Role(Base):
     __tablename__ = "roles"
 
@@ -43,6 +49,8 @@ class User(Base):
     name: Mapped[str] = mapped_column(String, index=True)
     email: Mapped[str] = mapped_column(String, unique=True, index=True)
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"))
+
+    status: Mapped[StatusEnum] = mapped_column(String, default=StatusEnum.ACTIVE, nullable=False)
     created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
     # deleted_at: Mapped[datetime | None] = mapped_column(nullable=True)
 
@@ -70,9 +78,9 @@ async def lifespan(app: FastAPI):
 
         # Seed users with mapped roles
         db.add_all([
-            User(name="Alice", email="alice@example.com", role=admin),
-            User(name="Bob", email="bob@example.com", role=user),
-            User(name="Carol", email="carol@example.com", role=manager),
+            User(name="Alice", email="alice@example.com", role=admin, status=StatusEnum.ACTIVE),
+            User(name="Bob", email="bob@example.com", role=user, status=StatusEnum.INACTIVE),
+            User(name="Carol", email="carol@example.com", role=manager, status=StatusEnum.SUSPENDED),
         ])
         db.commit()
 

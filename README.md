@@ -23,20 +23,26 @@ This project is a FastAPI application that demonstrates filtering and sorting fu
     git clone https://github.com/bhadri01/fastapi-filter-sort.git
     cd fastapi-filter-sort
     ```
+2. Create a virtual environment:
+    ```sh
+    python -m venv .venv
+    . .venv/bin/activate
+    ```
 
-2. Install Poetry if you haven't already:
+3. Install Poetry if you haven't already:
     ```sh
     pip install poetry
     ```
 
-3. Install the dependencies:
+4. Install the dependencies:
     ```sh
+    poetry lock
     poetry install
     ```
 
-4. Run the application:
+5. Run the application:
     ```sh
-    poetry run python example/main.py
+    poetry run python examples/main.py
     ```
 
 ## Contributing
