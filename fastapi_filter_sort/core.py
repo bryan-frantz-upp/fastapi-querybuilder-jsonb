@@ -60,7 +60,7 @@ def parse_filters(model, filters: dict, query: Select) -> Tuple[Optional[Any], S
                 expressions.append(LOGICAL_OPERATORS[key](*sub_expressions))
 
         elif isinstance(value, dict):
-            nested_keys = key.split("__")
+            nested_keys = key.split(".")
             column, query = resolve_and_join_column(
                 model, nested_keys, query, joins)
             for operator, operand in value.items():

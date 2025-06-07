@@ -55,7 +55,7 @@ def build_query(cls, params):
 
         column = getattr(cls, sort_field, None)
         if column is None:
-            nested_keys = sort_field.split("__")
+            nested_keys = sort_field.split(".")
             if len(nested_keys) > 1:
                 joins = {}
                 column, query = resolve_and_join_column(

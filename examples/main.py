@@ -52,8 +52,7 @@ class User(Base):
     age: Mapped[int] = mapped_column(nullable=True)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     status: Mapped[StatusEnum] = mapped_column(String, default=StatusEnum.ACTIVE, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(default=datetime.utcnow)
-    # deleted_at: Mapped[datetime | None] = mapped_column(nullable=True)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(datetime.timezone.utc))
 
     role: Mapped["Role"] = relationship("Role", back_populates="users")
 
