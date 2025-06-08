@@ -1,37 +1,31 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy import String, ForeignKey, create_engine
-from sqlalchemy.orm import relationship, sessionmaker, Session, declarative_base
-from datetime import datetime
 from contextlib import asynccontextmanager
+from datetime import datetime, timezone
+from fastapi import FastAPI, Depends
 from fastapi_filter_sort.dependencies import QueryBuilder
+from fastapi_pagination import Page, add_pagination
+from fastapi_pagination.ext.sqlalchemy import paginate
+from sqlalchemy import String, ForeignKey, select
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
+from sqlalchemy.orm import Mapped, mapped_column, relationship, declarative_base
 import uvicorn
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import Mapped, mapped_column
-from enum import Enum
+
+from examples.schemas import StatusEnum, UserResponse
 
 # ───── App & DB Setup ───────────────────────────
 
-DATABASE_URL = "sqlite:///./test.db"
+DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 
-engine = create_engine(DATABASE_URL, connect_args={"check_same_thread": False})
-SessionLocal = sessionmaker(bind=engine, autoflush=False, autocommit=False)
+engine = create_async_engine(DATABASE_URL, echo=True)
+SessionLocal = async_sessionmaker(bind=engine, expire_on_commit=False)
 Base = declarative_base()
 
 
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+async def get_db():
+    async with SessionLocal() as session:
+        yield session
 
 
 # ───── Models ────────────────────────────────────
-
-class StatusEnum(str, Enum):
-    ACTIVE = "active"
-    INACTIVE = "inactive"
-    SUSPENDED = "suspended"
 
 class Role(Base):
     __tablename__ = "roles"
@@ -52,43 +46,42 @@ class User(Base):
     age: Mapped[int] = mapped_column(nullable=True)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
     status: Mapped[StatusEnum] = mapped_column(String, default=StatusEnum.ACTIVE, nullable=False)
-    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(datetime.timezone.utc))
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
 
-    role: Mapped["Role"] = relationship("Role", back_populates="users")
-
-    role = relationship("Role", back_populates="users", lazy="selectin")
+    role: Mapped["Role"] = relationship("Role", back_populates="users", lazy="selectin")
 
 
 # ───── Lifespan / Seed Data ─────────────────────
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Create tables
-    Base.metadata.create_all(bind=engine)
+async def lifespan(_: FastAPI):
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
-    # Seed roles and users (sync mode)
-    db = Session(bind=engine)
+    async with SessionLocal() as session:
+        result = await session.execute(select(Role))
+        if not result.scalars().first():
+            admin = Role(name="admin")
+            user = Role(name="user")
+            manager = Role(name="manager")
+            session.add_all([admin, user, manager])
+            await session.commit()
 
-    if not db.query(Role).first():
-        admin = Role(name="admin")
-        user = Role(name="user")
-        manager = Role(name="manager")
-        db.add_all([admin, user, manager])
-        db.commit()
+            session.add_all([
+                User(name="Alice", email="alice@example.com", role=admin,
+                     status=StatusEnum.ACTIVE, age=30, is_active=True),
+                User(name="Bob", email="bob@example.com", role=user,
+                     status=StatusEnum.INACTIVE, age=25, is_active=False),
+                User(name="Carol", email="carol@example.com", role=manager,
+                     status=StatusEnum.SUSPENDED, age=40, is_active=False),
+                User(name="Dave", email="dave@example.com", role=admin,
+                     status=StatusEnum.ACTIVE, age=35, is_active=True),
+                User(name="Eve", email="eve@example.com", role=user,
+                     status=StatusEnum.ACTIVE, age=28, is_active=True),
+            ])
+            await session.commit()
 
-        # Seed users with mapped roles
-        db.add_all([
-            User(name="Alice", email="alice@example.com", role=admin, status=StatusEnum.ACTIVE, age=30, is_active=True),
-            User(name="Bob", email="bob@example.com", role=user, status=StatusEnum.INACTIVE, age=25, is_active=False),
-            User(name="Carol", email="carol@example.com", role=manager, status=StatusEnum.SUSPENDED, age=40, is_active=False),
-            User(name="Dave", email="dave@example.com", role=admin, status=StatusEnum.ACTIVE, age=35, is_active=True),
-            User(name="Eve", email="eve@example.com", role=user, status=StatusEnum.ACTIVE, age=28, is_active=True),
-        ])
-        db.commit()
-
-    db.close()
     yield
-
 
 # ───── FastAPI App ───────────────────────────────
 
@@ -96,10 +89,17 @@ app = FastAPI(lifespan=lifespan)
 
 
 @app.get("/users")
-def get_users(query = QueryBuilder(User), session: AsyncSession = Depends(get_db),):
-    data  = session.execute(query).scalars().all()
-    return data
+async def get_users(query=QueryBuilder(User), session: AsyncSession = Depends(get_db)):
+    result = await session.execute(query)
+    return result.scalars().all()
 
+
+@app.get("/users/paginated", response_model=Page[UserResponse])
+async def get_users_paginated(query=QueryBuilder(User), session: AsyncSession = Depends(get_db)):
+    return await paginate(session, query)
+
+
+add_pagination(app)
 
 # ───── Run Server ────────────────────────────────
 
