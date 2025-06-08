@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi-filter-sort"
-version = "0.1.4"
+version = "0.1.5"
 description = "Smart filtering, sorting, and searching for FastAPI with SQLAlchemy"
 authors = ["Bhadri01 <bhadrinathan28@gmail.com>"]
 license = "MIT"
