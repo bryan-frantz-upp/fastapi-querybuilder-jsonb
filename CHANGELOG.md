@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.6] - 2025-06-08
+
+### 🚨 Breaking Changes
+- Renamed package on PyPI from `fastapi_filter_sort` to `fastapi_querybuilder`.
+  - Please update your `requirements.txt` or `pip install` command accordingly:
+    ```bash
+    pip install fastapi_querybuilder
+    ```
+
+### 🚀 Features
+
+- Implement FastAPI QueryBuilder with filtering, sorting, and searching capabilities
+- Add core functionality for building SQLAlchemy queries based on filters, sorting, and search parameters
+- Introduce QueryParams class for handling query parameters in FastAPI
+- Develop logical and comparison operators for filtering
+- Implement utility functions for date range adjustments and parsing
+- Create dependencies for integrating the QueryBuilder with FastAPI routes
+- Add mobile navigation toggle, smooth scrolling, and search functionality in the documentation UI
+- Enhance styling for sidebar, navigation, and various UI components
+
+### ⚠️ Migration Note
+- If you're upgrading from the older `fastapi_filter_sort`, uninstall it first:
+  ```bash
+  pip uninstall fastapi_filter_sort
+  pip install fastapi_querybuilder
+
 ## [0.1.5] - 2025-06-08
 
 ### 🚀 Features
@@ -14,11 +40,15 @@ All notable changes to this project will be documented in this file.
 - Update datetime default to use timezone-aware now; change nested key separator from '__' to '.' for query building
 - Update author email in pyproject.toml
 
+### 💼 Other
+
+- V0.1.5
+
 ## [0.1.4] - 2025-03-25
 
 ### 🚀 Features
 
-- Initialize fastapi_querybuilder package with core functionality, dependencies, and configuration files
+- Initialize fastapi-filter-sort package with core functionality, dependencies, and configuration files
 - Add example application and enhance query builder functionality
 
 ### 🐛 Bug Fixes
