@@ -2,7 +2,7 @@
 name = "fastapi-filter-sort"
 version = "0.1.4"
 description = "Smart filtering, sorting, and searching for FastAPI with SQLAlchemy"
-authors = ["Bhadri01 <you@email.com>"]
+authors = ["Bhadri01 <bhadrinathan28@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 repository = "https://github.com/bhadri01/fastapi-filter-sort"
