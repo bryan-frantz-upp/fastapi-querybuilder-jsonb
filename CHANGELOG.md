@@ -18,7 +18,7 @@ All notable changes to this project will be documented in this file.
 
 ### 🚀 Features
 
-- Initialize fastapi-filter-sort package with core functionality, dependencies, and configuration files
+- Initialize fastapi_querybuilder package with core functionality, dependencies, and configuration files
 - Add example application and enhance query builder functionality
 
 ### 🐛 Bug Fixes

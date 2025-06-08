@@ -20,8 +20,8 @@ This project is a FastAPI application that demonstrates filtering and sorting fu
 
 1. Clone the repository:
     ```sh
-    git clone https://github.com/bhadri01/fastapi-filter-sort.git
-    cd fastapi-filter-sort
+    git clone https://github.com/bhadri01/fastapi_querybuilder.git
+    cd fastapi_querybuilder
     ```
 2. Create a virtual environment:
     ```sh

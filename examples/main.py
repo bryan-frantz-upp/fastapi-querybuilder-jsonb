@@ -1,7 +1,7 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from fastapi import FastAPI, Depends
-from fastapi_filter_sort.dependencies import QueryBuilder
+from fastapi_querybuilder.dependencies import QueryBuilder
 from fastapi_pagination import Page, add_pagination
 from fastapi_pagination.ext.sqlalchemy import paginate
 from sqlalchemy import String, ForeignKey, select

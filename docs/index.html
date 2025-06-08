@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastAPI QueryBuilder - Documentation</title>
+    <link rel="stylesheet" href="./style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-search"></i>
+                <span>FastAPI QueryBuilder</span>
+            </div>
+            <div class="nav-links">
+                <a href="#installation">Installation</a>
+                <a href="#quick-start">Quick Start</a>
+                <a href="#features">Features</a>
+                <a href="#api-reference">API Reference</a>
+                <a href="#examples">Examples</a>
+            </div>
+            <div class="nav-toggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+    </nav>
+
+    <aside class="sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-section">
+                <h3>Getting Started</h3>
+                <ul>
+                    <li><a href="#installation">Installation</a></li>
+                    <li><a href="#quick-start">Quick Start</a></li>
+                    <li><a href="#basic-usage">Basic Usage</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Features</h3>
+                <ul>
+                    <li><a href="#filtering">Filtering</a></li>
+                    <li><a href="#sorting">Sorting</a></li>
+                    <li><a href="#searching">Searching</a></li>
+                    <li><a href="#pagination">Pagination</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Operators</h3>
+                <ul>
+                    <li><a href="#comparison-operators">Comparison</a></li>
+                    <li><a href="#logical-operators">Logical</a></li>
+                    <li><a href="#string-operators">String</a></li>
+                    <li><a href="#date-operators">Date</a></li>
+                </ul>
+            </div>
+            <div class="sidebar-section">
+                <h3>Advanced</h3>
+                <ul>
+                    <li><a href="#nested-relationships">Nested Relationships</a></li>
+                    <li><a href="#custom-operators">Custom Operators</a></li>
+                    <li><a href="#soft-deletes">Soft Deletes</a></li>
+                </ul>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="container">
+            <!-- Hero Section -->
+            <section class="hero">
+                <div class="hero-content">
+                    <h1>FastAPI QueryBuilder</h1>
+                    <p class="hero-subtitle">Powerful, flexible query building for FastAPI and SQLAlchemy</p>
+                    <div class="hero-features">
+                        <div class="feature-badge">
+                            <i class="fas fa-filter"></i>
+                            <span>Advanced Filtering</span>
+                        </div>
+                        <div class="feature-badge">
+                            <i class="fas fa-sort"></i>
+                            <span>Dynamic Sorting</span>
+                        </div>
+                        <div class="feature-badge">
+                            <i class="fas fa-search"></i>
+                            <span>Global Search</span>
+                        </div>
+                        <div class="feature-badge">
+                            <i class="fas fa-link"></i>
+                            <span>Relationship Support</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Installation -->
+            <section id="installation" class="section">
+                <h2>Installation</h2>
+                <p>Install FastAPI QueryBuilder using pip:</p>
+                <div class="code-block">
+                    <pre><code class="language-bash">pip install fastapi_querybuilder</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Quick Start -->
+            <section id="quick-start" class="section">
+                <h2>Quick Start</h2>
+                <p>Get started with FastAPI QueryBuilder in just a few lines of code:</p>
+
+                <div class="code-block">
+                    <pre><code class="language-python">from fastapi import FastAPI, Depends
+from fastapi_querybuilder.dependencies import QueryBuilder
+from sqlalchemy.ext.asyncio import AsyncSession
+from your_models import User
+
+app = FastAPI()
+
+@app.get("/users")
+async def get_users(
+    query = QueryBuilder(User),
+    session: AsyncSession = Depends(get_db)
+):
+    result = await session.execute(query)
+    return result.scalars().all()</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">
+                        <i class="fas fa-copy"></i>
+                    </button>
+                </div>
+
+                <div class="info-box">
+                    <i class="fas fa-info-circle"></i>
+                    <div>
+                        <strong>That's it!</strong> Your endpoint now supports filtering, sorting, and searching through
+                        query parameters.
+                    </div>
+                </div>
+            </section>
+
+            <!-- Basic Usage -->
+            <section id="basic-usage" class="section">
+                <h2>Basic Usage</h2>
+                <p>Once you've set up your endpoint, you can use these query parameters:</p>
+
+                <div class="usage-grid">
+                    <div class="usage-card">
+                        <h3><i class="fas fa-filter"></i> Filtering</h3>
+                        <p>Use JSON-based filters to query your data</p>
+                        <code>?filters={"name": {"$eq": "John"}}</code>
+                    </div>
+                    <div class="usage-card">
+                        <h3><i class="fas fa-sort"></i> Sorting</h3>
+                        <p>Sort by any field in ascending or descending order</p>
+                        <code>?sort=name:asc</code>
+                    </div>
+                    <div class="usage-card">
+                        <h3><i class="fas fa-search"></i> Searching</h3>
+                        <p>Global search across all string fields</p>
+                        <code>?search=john</code>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features -->
+            <section id="features" class="section">
+                <h2>Features</h2>
+
+                <!-- Filtering -->
+                <div id="filtering" class="feature-section">
+                    <h3>Advanced Filtering</h3>
+                    <p>FastAPI QueryBuilder supports powerful JSON-based filtering with multiple operators:</p>
+
+                    <div class="example-block">
+                        <h4>Simple Equality Filter</h4>
+                        <div class="code-block">
+                            <pre><code class="language-json">{"name": {"$eq": "John Doe"}}</code></pre>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="example-block">
+                        <h4>Multiple Conditions</h4>
+                        <div class="code-block">
+                            <pre><code class="language-json">{
+    "$and": [
+        {"age": {"$gte": 18}},
+        {"is_active": {"$eq": true}},
+        {"status": {"$in": ["active", "pending"]}}
+    ]
+}</code></pre>
+
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="example-block">
+                        <h4>Logical Operators</h4>
+                        <div class="code-block">
+                            <pre><code class="language-json">{
+  "$or": [
+    {"name": {"$contains": "John"}},
+    {"email": {"$contains": "john"}}
+  ]
+}</code></pre>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sorting -->
+                <div id="sorting" class="feature-section">
+                    <h3>Dynamic Sorting</h3>
+                    <p>Sort your results by any field, including nested relationships:</p>
+
+                    <div class="sort-examples">
+                        <div class="sort-example">
+                            <strong>Basic Sorting:</strong>
+                            <code>?sort=name:asc</code>
+                        </div>
+                        <div class="sort-example">
+                            <strong>Descending Order:</strong>
+                            <code>?sort=created_at:desc</code>
+                        </div>
+                        <div class="sort-example">
+                            <strong>Nested Relationships:</strong>
+                            <code>?sort=role.name:asc</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Searching -->
+                <div id="searching" class="feature-section">
+                    <h3>Global Search</h3>
+                    <p>Search across all string, enum, integer, and boolean fields automatically:</p>
+
+                    <div class="search-features">
+                        <div class="search-feature">
+                            <i class="fas fa-font"></i>
+                            <div>
+                                <strong>String Fields</strong>
+                                <p>Case-insensitive search using ILIKE</p>
+                            </div>
+                        </div>
+                        <div class="search-feature">
+                            <i class="fas fa-list"></i>
+                            <div>
+                                <strong>Enum Fields</strong>
+                                <p>Matches enum values containing search term</p>
+                            </div>
+                        </div>
+                        <div class="search-feature">
+                            <i class="fas fa-hashtag"></i>
+                            <div>
+                                <strong>Integer Fields</strong>
+                                <p>Exact match for numeric searches</p>
+                            </div>
+                        </div>
+                        <div class="search-feature">
+                            <i class="fas fa-toggle-on"></i>
+                            <div>
+                                <strong>Boolean Fields</strong>
+                                <p>Matches "true" or "false" strings</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div id="pagination" class="feature-section">
+                    <h3>Pagination Support</h3>
+                    <p>Works seamlessly with fastapi-pagination:</p>
+
+                    <div class="code-block">
+                        <pre><code class="language-python">from fastapi_pagination import Page, add_pagination
+from fastapi_pagination.ext.sqlalchemy import paginate
+
+@app.get("/users", response_model=Page[UserResponse])
+async def get_users_paginated(
+    query = QueryBuilder(User),
+    session: AsyncSession = Depends(get_db)
+):
+    return await paginate(session, query)
+
+add_pagination(app)</code></pre>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- API Reference -->
+            <section id="api-reference" class="section">
+                <h2>API Reference</h2>
+
+                <!-- Comparison Operators -->
+                <div id="comparison-operators" class="api-section">
+                    <h3>Comparison Operators</h3>
+                    <div class="operators-grid">
+                        <div class="operator-card">
+                            <h4>$eq</h4>
+                            <p>Equal to</p>
+                            <code>{"age": {"$eq": 25}}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$ne</h4>
+                            <p>Not equal to</p>
+                            <code>{"status": {"$ne": "inactive"}}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$gt</h4>
+                            <p>Greater than</p>
+                            <code>{"age": {"$gt": 18}}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$gte</h4>
+                            <p>Greater than or equal</p>
+                            <code>{"age": {"$gte": 21}}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$lt</h4>
+                            <p>Less than</p>
+                            <code>{"age": {"$lt": 65}}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$lte</h4>
+                            <p>Less than or equal</p>
+                            <code>{"age": {"$lte": 64}}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$in</h4>
+                            <p>In array</p>
+                            <code>{"status": {"$in": ["active", "pending"]}}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$isanyof</h4>
+                            <p>Is any of (alias for $in)</p>
+                            <code>{"role": {"$isanyof": ["admin", "user"]}}</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- String Operators -->
+                <div id="string-operators" class="api-section">
+                    <h3>String Operators</h3>
+                    <div class="operators-grid">
+                        <div class="operator-card">
+                            <h4>$contains</h4>
+                            <p>Contains substring</p>
+                            <code>{"name": {"$contains": "john"}}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$ncontains</h4>
+                            <p>Does not contain</p>
+                            <code>{"name": {"$ncontains": "test"}}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$startswith</h4>
+                            <p>Starts with</p>
+                            <code>{"email": {"$startswith": "admin"}}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$endswith</h4>
+                            <p>Ends with</p>
+                            <code>{"email": {"$endswith": ".com"}}</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Null Operators -->
+                <div class="api-section">
+                    <h3>Null/Empty Operators</h3>
+                    <div class="operators-grid">
+                        <div class="operator-card">
+                            <h4>$isempty</h4>
+                            <p>Is null/empty</p>
+                            <code>{"description": {"$isempty": true}}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$isnotempty</h4>
+                            <p>Is not null/empty</p>
+                            <code>{"description": {"$isnotempty": true}}</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Logical Operators -->
+                <div id="logical-operators" class="api-section">
+                    <h3>Logical Operators</h3>
+                    <div class="operators-grid">
+                        <div class="operator-card">
+                            <h4>$and</h4>
+                            <p>Logical AND</p>
+                            <code>{"$and": [{"age": {"$gte": 18}}, {"is_active": {"$eq": true}}]}</code>
+                        </div>
+                        <div class="operator-card">
+                            <h4>$or</h4>
+                            <p>Logical OR</p>
+                            <code>{"$or": [{"name": {"$contains": "john"}}, {"email": {"$contains": "john"}}]}</code>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date Operators -->
+                <div id="date-operators" class="api-section">
+                    <h3>Date Handling</h3>
+                    <p>FastAPI QueryBuilder automatically handles date ranges for date-only strings:</p>
+
+                    <div class="date-examples">
+                        <div class="date-example">
+                            <strong>Date-only string:</strong>
+                            <code>{"created_at": {"$eq": "2023-12-01"}}</code>
+                            <p>Matches entire day (00:00:00 to 23:59:59)</p>
+                        </div>
+                        <div class="date-example">
+                            <strong>Full datetime:</strong>
+                            <code>{"created_at": {"$eq": "2023-12-01T10:30:00"}}</code>
+                            <p>Exact timestamp match</p>
+                        </div>
+                    </div>
+
+                    <div class="supported-formats">
+                        <h4>Supported Date Formats</h4>
+                        <ul>
+                            <li><code>YYYY-MM-DD</code> (e.g., "2023-12-01")</li>
+                            <li><code>YYYY-MM-DDTHH:MM:SS</code> (e.g., "2023-12-01T10:30:00")</li>
+                            <li><code>YYYY-MM-DD HH:MM:SS</code> (e.g., "2023-12-01 10:30:00")</li>
+                            <li><code>YYYY-MM-DDTHH:MM:SSZ</code> (e.g., "2023-12-01T10:30:00Z")</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Examples -->
+            <section id="examples" class="section">
+                <h2>Real-World Examples</h2>
+
+                <div class="example-block">
+                    <h3>Complete Model Setup</h3>
+                    <div class="code-block">
+                        <pre><code class="language-python">from sqlalchemy import String, ForeignKey, DateTime
+from sqlalchemy.orm import Mapped, mapped_column, relationship, declarative_base
+from datetime import datetime, timezone
+
+Base = declarative_base()
+
+class Role(Base):
+    __tablename__ = "roles"
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String, unique=True)
+    
+    users: Mapped[list["User"]] = relationship("User", back_populates="role")
+
+class User(Base):
+    __tablename__ = "users"
+    
+    id: Mapped[int] = mapped_column(primary_key=True)
+    name: Mapped[str] = mapped_column(String)
+    email: Mapped[str] = mapped_column(String, unique=True)
+    role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"))
+    age: Mapped[int] = mapped_column(nullable=True)
+    is_active: Mapped[bool] = mapped_column(default=True)
+    created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
+    deleted_at: Mapped[datetime] = mapped_column(nullable=True)  # Soft delete support
+    
+    role: Mapped["Role"] = relationship("Role", back_populates="users")</code></pre>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="example-block">
+                    <h3>Advanced Filtering Examples</h3>
+
+                    <div class="example-item">
+                        <h4>Find active users older than 25</h4>
+                        <div class="code-block">
+                            <pre><code class="language-bash">GET /users?filters={"$and": [{"age": {"$gt": 25}}, {"is_active": {"$eq": true}}]}</code></pre>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="example-item">
+                        <h4>Find users by role name (nested relationship)</h4>
+                        <div class="code-block">
+                            <pre><code class="language-bash">GET /users?filters={"role.name": {"$eq": "admin"}}</code></pre>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="example-item">
+                        <h4>Complex query with multiple conditions</h4>
+                        <div class="code-block">
+                            <pre><code class="language-json">{
+  "$and": [
+    {
+      "$or": [
+        {"name": {"$contains": "john"}},
+        {"email": {"$contains": "john"}}
+      ]
+    },
+    {"age": {"$gte": 18}},
+    {"role.name": {"$in": ["admin", "user"]}}
+  ]
+}</code></pre>
+                            <button class="copy-btn" onclick="copyCode(this)">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="example-block">
+                    <h3>URL Examples</h3>
+                    <div class="url-examples">
+                        <div class="url-example">
+                            <strong>Basic filtering:</strong>
+                            <code>GET /users?filters={"name":{"$eq":"John"}}</code>
+                        </div>
+                        <div class="url-example">
+                            <strong>With sorting:</strong>
+                            <code>GET /users?filters={"is_active":{"$eq":true}}&sort=name:asc</code>
+                        </div>
+                        <div class="url-example">
+                            <strong>With search:</strong>
+                            <code>GET /users?search=john&sort=created_at:desc</code>
+                        </div>
+                        <div class="url-example">
+                            <strong>Combined:</strong>
+                            <code>GET /users?filters={"age":{"$gte":18}}&search=admin&sort=role.name:asc</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Advanced Features -->
+            <section id="advanced" class="section">
+                <h2>Advanced Features</h2>
+
+                <div id="nested-relationships" class="feature-section">
+                    <h3>Nested Relationships</h3>
+                    <p>Query and sort by nested relationship fields using dot notation:</p>
+
+                    <div class="code-block">
+                        <pre><code class="language-json">{
+  "role.name": {"$eq": "admin"},
+  "department.company.name": {"$contains": "Tech"}
+}</code></pre>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="soft-deletes" class="feature-section">
+                    <h3>Soft Delete Support</h3>
+                    <p>Automatically excludes soft-deleted records if your model has a <code>deleted_at</code> field:
+                    </p>
+
+                    <div class="code-block">
+                        <pre><code class="language-python">class User(Base):
+    # ... other fields ...
+    deleted_at: Mapped[datetime] = mapped_column(nullable=True)
+    
+# QueryBuilder automatically adds: WHERE deleted_at IS NULL</code></pre>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="feature-section">
+                    <h3>Error Handling</h3>
+                    <p>FastAPI QueryBuilder provides clear error messages for invalid queries:</p>
+
+                    <div class="error-examples">
+                        <div class="error-example">
+                            <strong>Invalid JSON:</strong>
+                            <code>400 Bad Request: Invalid filter JSON</code>
+                        </div>
+                        <div class="error-example">
+                            <strong>Invalid field:</strong>
+                            <code>400 Bad Request: Invalid filter key: nonexistent_field</code>
+                        </div>
+                        <div class="error-example">
+                            <strong>Invalid operator:</strong>
+                            <code>400 Bad Request: Invalid operator '$invalid' for field 'name'</code>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h4>FastAPI QueryBuilder</h4>
+                        <p>Powerful query building for FastAPI applications</p>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Links</h4>
+                        <ul>
+                            <li><a href="#installation">Installation</a></li>
+                            <li><a href="#quick-start">Quick Start</a></li>
+                            <li><a href="#examples">Examples</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Resources</h4>
+                        <ul>
+                            <li><a href="https://github.com/bhadri01/fastapi-querybuilder">GitHub</a></li>
+                            <li><a href="https://pypi.org/project/fastapi-querybuilder/">PyPI</a></li>
+                            <li><a href="#api-reference">API Reference</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2024 FastAPI QueryBuilder. Built with ❤️ for the FastAPI community.</p>
+                </div>
+            </footer>
+        </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+    <script src="./script.js"></script>
+</body>
+
+</html>
