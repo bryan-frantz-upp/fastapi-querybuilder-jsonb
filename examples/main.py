@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from datetime import datetime, timezone
 from fastapi import FastAPI, Depends
+import sqlalchemy
 from fastapi_querybuilder.dependencies import QueryBuilder
 from fastapi_pagination import Page, add_pagination
 from fastapi_pagination.ext.sqlalchemy import paginate
@@ -45,7 +46,11 @@ class User(Base):
     role_id: Mapped[int] = mapped_column(ForeignKey("roles.id"))
     age: Mapped[int] = mapped_column(nullable=True)
     is_active: Mapped[bool] = mapped_column(default=True, nullable=False)
-    status: Mapped[StatusEnum] = mapped_column(String, default=StatusEnum.ACTIVE, nullable=False)
+    status: Mapped[StatusEnum] = mapped_column(
+        sqlalchemy.Enum(StatusEnum), 
+        default=StatusEnum.ACTIVE, 
+        nullable=False
+    )
     created_at: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc))
 
     role: Mapped["Role"] = relationship("Role", back_populates="users", lazy="selectin")

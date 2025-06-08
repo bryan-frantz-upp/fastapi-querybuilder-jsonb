@@ -1,6 +1,4 @@
-# fastapi_querybuilder/builder.py
-
-from sqlalchemy import select, or_, asc, desc, String, Enum
+from sqlalchemy import cast, select, or_, asc, desc, String, Enum
 from fastapi import HTTPException
 from .core import parse_filter_query, parse_filters, resolve_and_join_column
 
@@ -18,28 +16,19 @@ def build_query(cls, params):
         if filter_expr is not None:
             query = query.where(filter_expr)
 
-    # Search
+    # Search - ONLY in safe columns
     if params.search:
         search_expr = []
+        
         for column in cls.__table__.columns:
-            if isinstance(column.type, String):
-                # Search in string columns using ilike
+            if is_enum_column(column):
+                search_expr.append(cast(column, String).ilike(f"%{params.search}%"))
+            elif is_string_column(column):
                 search_expr.append(column.ilike(f"%{params.search}%"))
-            elif isinstance(column.type, Enum):
-                # Search in enum columns by checking if search term matches any enum value
-                enum_matches = []
-                if hasattr(column.type, 'enums'):
-                    for enum_value in column.type.enums:
-                        if params.search.lower() in enum_value.lower():
-                            enum_matches.append(column == enum_value)
-                if enum_matches:
-                    search_expr.extend(enum_matches)
-            # Optionally, search in integer columns if the search is a digit
-            elif hasattr(column.type, "python_type") and column.type.python_type is int:
+            elif is_integer_column(column):
                 if params.search.isdigit():
                     search_expr.append(column == int(params.search))
-            # Optionally, search in boolean columns
-            elif hasattr(column.type, "python_type") and column.type.python_type is bool:
+            elif is_boolean_column(column):
                 if params.search.lower() in ("true", "false"):
                     search_expr.append(column == (params.search.lower() == "true"))
 
@@ -68,3 +57,22 @@ def build_query(cls, params):
             asc(column) if sort_dir.lower() == "asc" else desc(column))
 
     return query
+
+def is_enum_column(column):
+    """Check if a column is an enum type"""
+    return isinstance(column.type, Enum)
+
+
+def is_string_column(column):
+    """Check if a column is a string type"""
+    return isinstance(column.type, String)
+
+
+def is_integer_column(column):
+    """Check if a column is an integer type"""
+    return hasattr(column.type, "python_type") and column.type.python_type is int
+
+
+def is_boolean_column(column):
+    """Check if a column is a boolean type"""
+    return hasattr(column.type, "python_type") and column.type.python_type is bool
