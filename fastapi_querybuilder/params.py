@@ -1,4 +1,4 @@
-# fastapi_querybuilder/params.py
+# fastapi-querybuilder/params.py
 
 from typing import Optional
 from fastapi import Query

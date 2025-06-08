@@ -1,13 +1,13 @@
 [tool.poetry]
-name = "fastapi_querybuilder"
+name = "fastapi-querybuilder"
 version = "0.1.8"
 description = "Smart filtering, sorting, and searching for FastAPI with SQLAlchemy"
 authors = ["Bhadri01 <bhadrinathan28@gmail.com>"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/bhadri01/fastapi_querybuilder"
+repository = "https://github.com/bhadri01/fastapi-querybuilder"
 keywords = ["fastapi", "sqlalchemy", "filters", "query", "sort", "search", "pagination", "api", "rest"]
-packages = [{ include = "fastapi_querybuilder" }]
+packages = [{ include = "fastapi-querybuilder" }]
 
 classifiers = [
     "Framework :: FastAPI",

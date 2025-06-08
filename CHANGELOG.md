@@ -18,10 +18,10 @@ All notable changes to this project will be documented in this file.
 ## [0.1.6] - 2025-06-08
 
 ### 🚨 Breaking Changes
-- Renamed package on PyPI from `fastapi_filter_sort` to `fastapi_querybuilder`.
+- Renamed package on PyPI from `fastapi_filter_sort` to `fastapi-querybuilder`.
   - Please update your `requirements.txt` or `pip install` command accordingly:
     ```bash
-    pip install fastapi_querybuilder
+    pip install fastapi-querybuilder
     ```
 
 ### 🚀 Features
@@ -39,7 +39,7 @@ All notable changes to this project will be documented in this file.
 - If you're upgrading from the older `fastapi_filter_sort`, uninstall it first:
   ```bash
   pip uninstall fastapi_filter_sort
-  pip install fastapi_querybuilder
+  pip install fastapi-querybuilder
 
 ## [0.1.5] - 2025-06-08
 
