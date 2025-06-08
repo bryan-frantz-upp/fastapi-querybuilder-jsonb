@@ -1,4 +1,4 @@
-# fastapi-querybuilder/dependencies.py
+# fastapi_querybuilder/dependencies.py
 
 from fastapi import Depends, Request
 from .params import QueryParams
