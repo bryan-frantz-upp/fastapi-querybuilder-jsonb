@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.1.8] - 2025-06-08
+
+### 🐛 Bug Fixes
+
+- Update User model to use SQLAlchemy Enum for status field and improve search functionality in QueryBuilder
+
 ## [0.1.7] - 2025-06-08
 
 ### 🐛 Bug Fixes
