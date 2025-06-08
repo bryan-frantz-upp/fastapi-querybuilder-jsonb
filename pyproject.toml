@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi_querybuilder"
-version = "0.1.6"
+version = "0.1.7"
 description = "Smart filtering, sorting, and searching for FastAPI with SQLAlchemy"
 authors = ["Bhadri01 <bhadrinathan28@gmail.com>"]
 license = "MIT"
