@@ -1,4 +1,4 @@
-# fastapi_querybuilder/params.py
+# fastapi_querybuilder_jsonb/params.py
 
 from typing import Optional
 from fastapi import Query

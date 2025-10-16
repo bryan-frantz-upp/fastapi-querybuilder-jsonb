@@ -4,10 +4,7 @@ from .core import parse_filter_query, parse_filters, resolve_and_join_column
 
 
 def build_query(cls, params):
-    if hasattr(cls, 'deleted_at'):
-        query = select(cls).where(cls.deleted_at.is_(None))
-    else:
-        query = select(cls)
+    query = select(cls)
 
     # Filters
     parsed_filters = parse_filter_query(params.filters)

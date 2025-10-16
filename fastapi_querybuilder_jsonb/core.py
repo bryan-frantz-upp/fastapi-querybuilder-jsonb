@@ -66,7 +66,7 @@ def parse_filters(model, filters: dict, query: Select) -> Tuple[Optional[Any], S
             for operator, operand in value.items():
                 if operator not in COMPARISON_OPERATORS:
                     raise HTTPException(
-                        status_code=400, detail=f"Invalid operator '{operator}' for field '{key}'")
+                        status_code=400, detail=f"Unknown operator '{operator}' for field '{key}'")
                 try:
                     if operator in ["$isempty", "$isnotempty"]:
                         expressions.append(
