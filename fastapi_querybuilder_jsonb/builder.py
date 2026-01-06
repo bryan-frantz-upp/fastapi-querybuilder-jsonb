@@ -1,17 +1,20 @@
-from sqlalchemy import cast, select, or_, asc, desc, String, Enum
+from typing import Any
+
+from sqlalchemy import cast, select, or_, asc, desc, String, Enum, Select
 from fastapi import HTTPException
 from .core import parse_filter_query, parse_filters, resolve_and_join_column
+from .params import Params
 
 
-def build_query(cls, params):
-    query = select(cls)
+def build_query(cls: Any, params: Params, stmt: Select | None = None) -> Select:
+    stmt = select(cls) if stmt is None else stmt
 
     # Filters
     parsed_filters = parse_filter_query(params.filters)
     if parsed_filters:
-        filter_expr, query = parse_filters(cls, parsed_filters, query)
+        filter_expr, stmt = parse_filters(cls, parsed_filters, stmt)
         if filter_expr is not None:
-            query = query.where(filter_expr)
+            stmt = stmt.where(filter_expr)
 
     # Search - ONLY in safe columns
     if params.search:
@@ -30,7 +33,7 @@ def build_query(cls, params):
                     search_expr.append(column == (params.search.lower() == "true"))
 
         if search_expr:
-            query = query.where(or_(*search_expr))
+            stmt = stmt.where(or_(*search_expr))
 
     # Sorting
     if params.sort:
@@ -44,16 +47,16 @@ def build_query(cls, params):
             nested_keys = sort_field.split(".")
             if len(nested_keys) > 1:
                 joins = {}
-                column, query = resolve_and_join_column(
-                    cls, nested_keys, query, joins)
+                column, stmt = resolve_and_join_column(
+                    cls, nested_keys, stmt, joins)
             else:
                 raise HTTPException(
                     status_code=400, detail=f"Invalid sort field: {sort_field}")
 
-        query = query.order_by(
+        stmt = stmt.order_by(
             asc(column) if sort_dir.lower() == "asc" else desc(column))
 
-    return query
+    return stmt
 
 def is_enum_column(column):
     """Check if a column is an enum type"""
