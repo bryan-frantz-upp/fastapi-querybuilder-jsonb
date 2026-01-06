@@ -5,12 +5,6 @@ from typing import Optional
 from fastapi import Query
 
 
-class Params[Protocol]:
-	filters: str | None
-	sort: str | None
-	search: str | None
-
-
 class QueryParams:
 	def __init__(
 		self,
