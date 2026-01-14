@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "fastapi-querybuilder-jsonb"
-version = "0.5.1"
+version = "0.5.2"
 description = "Smart filtering, sorting, and searching for FastAPI with SQLAlchemy (and JSONB)"
 authors = ["Bhadri01 <bhadrinathan28@gmail.com>", "Bryan Frantz <bryan.frantz@nextierofs.com"]
 license = "MIT"
