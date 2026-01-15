@@ -89,7 +89,7 @@ def _isanyof_operator(column, value):
 def _contains_operator(column, value):
     # if JSON/JSONB column, use JSONB.contains()
     if isinstance(column.type, (JSON, JSONB)):
-        return column.contains(value)
+        return column.contains(cast(value, JSONB))
     # else fall back to substring search
     return column.ilike(f"%{value}%")
 
@@ -113,7 +113,7 @@ def _has_all_operator(column, keys):
 def _contained_by_operator(column, value):
     if not isinstance(column.type, (JSON, JSONB)):
         raise TypeError("$contained_by is only supported on JSON/JSONB columns")
-    return column.contained_by(value)
+    return column.contained_by(cast(value, JSONB))
 
 COMPARISON_OPERATORS = {
     "$eq": _eq_operator,
